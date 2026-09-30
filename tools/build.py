@@ -5,7 +5,7 @@ Build the stand-alone demo and the WordPress plugin zip.
     python3 tools/build.py
 
 Outputs
-    demo/index.html   one self-contained page (styles, fonts and scripts inlined)
+    index.html, demo/index.html   one self-contained page (styles, fonts and scripts inlined); the root copy is what Vercel serves
     dist/mkurugenzi.zip   the plugin, ready for Plugins > Add New > Upload Plugin
 """
 import base64
@@ -38,9 +38,10 @@ def build_demo():
     html = html.replace('<title>Mkurugenzi preview</title>', '<title>Mkurugenzi</title>')
     html = re.sub(r'<p class="note">.*?</p>', '', html, flags=re.S)
     os.makedirs(os.path.join(ROOT, 'demo'), exist_ok=True)
-    with open(os.path.join(ROOT, 'demo', 'index.html'), 'w', encoding='utf-8') as f:
-        f.write(html)
-    print('demo/index.html', len(html), 'bytes')
+    for out in (os.path.join(ROOT, 'demo', 'index.html'), os.path.join(ROOT, 'index.html')):
+        with open(out, 'w', encoding='utf-8') as f:
+            f.write(html)
+    print('index.html + demo/index.html', len(html), 'bytes')
 
 
 def build_zip():

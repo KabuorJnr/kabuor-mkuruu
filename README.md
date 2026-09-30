@@ -6,7 +6,9 @@ Garments hang side-on from a chrome rail and swing round to face the shopper on 
 
 ## Try the demo
 
-Open `demo/index.html` in a browser. On Windows, double-click `demo/Open Mkurugenzi.bat` to open it in Chrome.
+Deploy this repo on Vercel as a static site: framework preset **Other**, no build command, root directory left blank. The root `index.html` is the demo.
+
+Locally, open `index.html` in a browser. On Windows, double-click `demo/Open Mkurugenzi.bat` to open it in Chrome.
 
 The demo uses the bundled catalogue and a demo checkout that takes no payment. It needs an internet connection for the garment photos.
 
@@ -81,7 +83,8 @@ assets/cart.js        Bag and checkout panel (WooCommerce Store API, demo mode)
 assets/products.js    Garment image sheet map + fallback catalogue
 assets/fonts/         Self-hosted OFL fonts and licences
 preview.html          Development preview using the files in assets/
-demo/                 Self-contained demo page and Chrome launcher
+index.html            Self-contained demo page (served by Vercel)
+demo/                 Same demo page plus a Chrome launcher
 dist/mkurugenzi.zip   Ready-to-upload plugin
 tools/build.py        Rebuilds demo/index.html and dist/mkurugenzi.zip
 tools/pack_atlas.py   Builds the garment image sheet from green-screen renders
