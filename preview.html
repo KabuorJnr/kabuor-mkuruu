@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mkurugenzi preview</title>
+<link rel="stylesheet" href="assets/rack.css">
+<style>
+  body { margin: 0; background: #dfe8f5; font-family: system-ui, sans-serif; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 48px 20px; }
+  .note { font-size: 13px; color: #3b4660; max-width: 720px; margin: 0 auto 24px; text-align: center; line-height: 1.5; }
+  @media (max-width: 720px) { .wrap { padding: 24px 0; } .note { padding: 0 16px; } }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="note">Preview of the <code>[mkurugenzi]</code> shortcode using the bundled catalog. On the WordPress site the rack reads live products, prices, sizes and stock from WooCommerce, and "Add to bag" puts items straight into the store cart.</p>
+    <div class="mkr" data-mkr-config='{"title":"The Rack","ticker":["More than just a brand","Wakurugenzi","Tap a piece to see it up close","New pieces land on the rack"]}'></div>
+  </div>
+  <script src="assets/products.js"></script>
+  <script src="assets/cart.js"></script>
+  <script src="assets/rack.js"></script>
+</body>
+</html>
