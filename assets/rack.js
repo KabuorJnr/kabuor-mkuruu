@@ -121,8 +121,16 @@
   };
 
   // A studio cut-out drawn from the shared image sheet, or the product photo as a fallback
-  Rack.prototype.imgTag = function (p, cls) {
-    var a = this.atlas, it = p._cut ? a.items[p._key] : null;
+  Rack.prototype.sideOf = function (p) {
+    var a = this.atlas;
+    return (a && p._key && a.items['side:' + p._key]) || null;
+  };
+  Rack.prototype.ratio = function (p, side) {
+    var a = this.atlas, it = a && p._key && a.items[(side ? 'side:' : '') + p._key];
+    return it ? it[2] / it[3] : (side ? .3 : .78);
+  };
+  Rack.prototype.imgTag = function (p, cls, side) {
+    var a = this.atlas, it = p._cut ? a.items[(side && this.sideOf(p) ? 'side:' : '') + p._key] : null;
     if (it) {
       var h = it[3];
       return '<span class="mkr-sprite ' + cls + '" role="img" aria-label="' + esc(p.name) + '" style="' +
@@ -152,10 +160,8 @@
       '</div>' +
       '<div class="mkr-scene">' +
       '<div class="mkr-railzone">' +
-      '<div class="mkr-light" aria-hidden="true"></div>' +
-      '<div class="mkr-rod" aria-hidden="true"><span class="mkr-drop mkr-drop-l"></span><span class="mkr-drop mkr-drop-r"></span><span class="mkr-bar"></span></div>' +
+      '<div class="mkr-rod" aria-hidden="true"><span class="mkr-bracket mkr-bracket-l"></span><span class="mkr-bar"></span><span class="mkr-bracket mkr-bracket-r"></span></div>' +
       '<ul class="mkr-rack" role="list"></ul>' +
-      '<div class="mkr-floor" aria-hidden="true"></div>' +
       '</div>' +
       (this.wall.length ?
         '<aside class="mkr-wall" aria-label="Hats, bags and socks wall">' +
@@ -166,7 +172,8 @@
           return '<li class="mkr-peg mkr-peg-' + p._c.type + '" style="--h:' + h + 'px">' +
             '<span class="mkr-hook" aria-hidden="true"></span>' +
             '<button type="button" class="mkr-wallitem" data-w="' + i + '" aria-label="' + esc(p.name + ', ' + self.money(p.price) + (p.inStock === false ? ', sold out' : '') + '. Open details') + '">' +
-            '<span class="mkr-wallswing">' + self.imgTag(p, 'mkr-wallimg') + '</span></button>' +
+            '<span class="mkr-wallswing">' + self.imgTag(p, 'mkr-wallimg') + '</span>' +
+            '<span class="mkr-tag" aria-hidden="true">' + esc(p.name) + '</span></button>' +
             '</li>';
         }).join('') +
         '</ul></div>' +
@@ -174,7 +181,7 @@
         '</aside>' : '') +
       '</div>' +
       '<div class="mkr-under">' +
-      '<p class="mkr-caption" aria-live="polite"></p>' +
+      '<p class="mkr-caption mkr-sr" aria-live="polite"></p>' +
       '<button type="button" class="mkr-pill">See availability</button>' +
       '</div>' +
       '<div class="mkr-ticker" aria-hidden="true"><div class="mkr-ticker-track">' + tick + tick + tick + tick + '</div></div>' +
@@ -240,9 +247,16 @@
     this.rackEl.innerHTML = items.map(function (p, i) {
       var sold = p.inStock === false;
       var h = HEIGHT[p._c.type] || 320;
-      return '<li class="mkr-slot' + (sold ? ' is-sold' : '') + '" style="--i:' + i + ';--h:' + h + 'px;--grow-s:' + (h > 380 ? 1.06 : 1.14) + '">' +
+      var real = !!self.sideOf(p);
+      var ws = Math.round(h * (real ? self.ratio(p, true) : self.ratio(p) * .42));
+      var wf = Math.round(h * self.ratio(p));
+      return '<li class="mkr-slot' + (sold ? ' is-sold' : '') + '" style="--i:' + i + ';--h:' + h + 'px;--ws:' + ws + 'px;--wf:' + wf + 'px">' +
         '<button type="button" class="mkr-item" data-i="' + i + '" aria-label="' + esc(p.name + ', ' + self.money(p.price) + (sold ? ', sold out' : '') + '. Open details') + '">' +
-        '<span class="mkr-garment"><span class="mkr-swing">' + self.imgTag(p, 'mkr-img') + '</span></span>' +
+        '<span class="mkr-garment">' +
+        '<span class="mkr-face mkr-face-side' + (real ? '' : ' is-fake') + '">' + self.imgTag(p, 'mkr-img', true) + '</span>' +
+        '<span class="mkr-face mkr-face-front"><span class="mkr-swing">' + self.imgTag(p, 'mkr-img') + '</span></span>' +
+        '</span>' +
+        '<span class="mkr-tag" aria-hidden="true">' + esc(p.name) + (sold ? ' · Sold out' : '') + '</span>' +
         '</button></li>';
     }).join('');
 
@@ -267,17 +281,27 @@
     this.rackEl.classList.add('is-entering');
   };
 
+  // Fit the rail: garments keep their true proportions and the whole row scales down if needed
   Rack.prototype.layout = function () {
-    var n = (this.visible && this.visible.length) || 1;
-    var w = this.zoneEl.clientWidth;
-    var small = w < 560;
-    var grow = small ? 120 : 200;
-    var slot = Math.floor((w - 70 - grow) / n);
-    var min = small ? 58 : 50;
-    this.zoneEl.classList.toggle('is-scroll', slot < min);
-    slot = Math.max(min, Math.min(slot, 120));
-    this.root.style.setProperty('--mkr-slot', slot + 'px');
-    this.root.style.setProperty('--mkr-grow', grow + 'px');
+    var items = this.visible || [];
+    if (!items.length) return;
+    var self = this, w = this.zoneEl.clientWidth, small = w < 560;
+    var gap = small ? 14 : 24, sum = 0, extra = 0, maxH = 0;
+    items.forEach(function (p) {
+      var h = HEIGHT[p._c.type] || 320;
+      maxH = Math.max(maxH, h);
+      var ws = h * (self.sideOf(p) ? self.ratio(p, true) : self.ratio(p) * .42), wf = h * self.ratio(p);
+      sum += ws + gap; extra = Math.max(extra, wf - ws);
+    });
+    var need = sum + extra + 60;
+    var k = Math.min(1, (w - 20) / need);
+    var scroll = k < (small ? .8 : .62);
+    if (scroll) k = small ? .8 : .62;
+    this.zoneEl.classList.toggle('is-scroll', scroll);
+    this.root.style.setProperty('--k', k.toFixed(3));
+    this.root.style.setProperty('--railh', Math.round(Math.max(maxH * k + 96, 380)) + 'px');
+    this.root.style.setProperty('--gap', gap + 'px');
+    this.root.style.setProperty('--rodw', Math.round(Math.min(scroll ? need * k : w - 8, need * k + 120)) + 'px');
   };
 
   Rack.prototype.setActive = function (i) {
@@ -297,7 +321,7 @@
         (price ? '<span class="mkr-caption-price">' + price + '</span>' : '') +
         (p.inStock === false ? '<span class="mkr-caption-sold">Sold out</span>' : '');
     } else {
-      this.captionEl.innerHTML = '<span class="mkr-caption-hint">Hover a piece to turn it round. Click to take it off the rail.</span>';
+      this.captionEl.innerHTML = '';
     }
   };
 

@@ -60,13 +60,16 @@
   isolation: isolate;
   overflow: hidden;
   border-radius: 10px;
-  background:
-    radial-gradient(1200px 520px at 40% 18%, rgba(255, 250, 240, .95), rgba(255, 250, 240, 0) 70%),
-    linear-gradient(180deg, var(--mkr-bg-2) 0%, var(--mkr-bg) 62%, #dedbd4 100%);
+  background-color: #e8e7e3;
+  background-image:
+    radial-gradient(circle at center, rgba(0,0,0,0) 0 2.6px, rgba(40,36,30,.075) 2.9px 3.8px, rgba(0,0,0,0) 4.2px),
+    linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,0) 40%, rgba(0,0,0,.03));
+  background-size: 36px 36px, 100% 100%;
+  background-position: 18px 10px, 0 0;
   box-shadow: 0 50px 90px -60px rgba(24, 30, 50, .55), 0 0 0 1px rgba(24,24,26,.05);
 }
 .mkr-grain {
-  position: absolute; inset: 0; z-index: 30; pointer-events: none; opacity: .07; mix-blend-mode: multiply;
+  position: absolute; inset: 0; z-index: 30; pointer-events: none; opacity: .045; mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -96,135 +99,124 @@
 /* ------------------------------------------------------------------ */
 .mkr-scene {
   position: relative; z-index: 2;
-  display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 26px;
+  display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px;
   padding: 10px 30px 0;
 }
 
 /* Rail */
-.mkr-railzone { position: relative; height: 560px; }
-.mkr-light {
-  position: absolute; left: 10%; right: 10%; top: -40px; height: 420px; pointer-events: none;
-  background: radial-gradient(50% 60% at 50% 30%, rgba(255, 244, 222, .75), rgba(255, 244, 222, 0));
-}
-.mkr-rod { position: absolute; left: 12px; right: 12px; top: 0; height: 64px; pointer-events: none; z-index: 0; }
-.mkr-drop {
-  position: absolute; top: -12px; width: 5px; height: 60px; border-radius: 3px;
-  background: linear-gradient(90deg, #7d7f84, #f1f1f3 45%, #8a8c91);
-}
-.mkr-drop-l { left: 6%; } .mkr-drop-r { right: 6%; }
-.mkr-drop::after {
-  content: ""; position: absolute; left: 50%; bottom: -5px; width: 15px; height: 15px; margin-left: -7.5px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #fff, #b9bbc0 45%, #6e7075);
-}
+.mkr-railzone { position: relative; height: calc(var(--railh, 470px)); }
+.mkr-rod { position: absolute; left: 50%; top: 30px; width: var(--rodw, 90%); max-width: 100%; height: 34px; transform: translateX(-50%); pointer-events: none; z-index: 0; transition: width .5s var(--mkr-ease); }
 .mkr-bar {
-  position: absolute; left: 0; right: 0; top: 44px; height: 11px; border-radius: 6px;
-  background: linear-gradient(180deg, #ffffff 0%, #d7d8db 22%, #8b8d92 52%, #c9cace 74%, #7f8186 100%);
-  box-shadow: 0 10px 14px -8px rgba(0,0,0,.35), inset 0 -1px 0 rgba(0,0,0,.15);
+  position: absolute; left: 10px; right: 10px; top: 11px; height: 12px; border-radius: 7px;
+  background: linear-gradient(180deg, #ffffff 0%, #e3e4e6 18%, #a7a9ad 44%, #6f7176 58%, #c2c4c8 78%, #8c8e93 100%);
+  box-shadow: 0 12px 16px -10px rgba(0,0,0,.4), inset 0 -1px 0 rgba(0,0,0,.18);
 }
-.mkr-bar::before, .mkr-bar::after {
-  content: ""; position: absolute; top: -4px; width: 14px; height: 19px; border-radius: 4px;
-  background: linear-gradient(90deg, #86888d, #f4f4f5 45%, #909297);
+.mkr-bar::after { content: ""; position: absolute; left: 6%; right: 30%; top: 2px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.95) 40%, rgba(255,255,255,0)); }
+.mkr-bracket {
+  position: absolute; top: 0; width: 18px; height: 34px; border-radius: 3px;
+  background:
+    radial-gradient(circle at 50% 22%, #6d6f74 0 1.6px, transparent 2.2px),
+    radial-gradient(circle at 50% 78%, #6d6f74 0 1.6px, transparent 2.2px),
+    linear-gradient(90deg, #9a9ca1, #f5f5f6 40%, #b7b9bd 70%, #8a8c91);
+  box-shadow: 0 6px 10px -6px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.08);
 }
-.mkr-bar::before { left: -2px; } .mkr-bar::after { right: -2px; }
-
-.mkr-floor {
-  position: absolute; left: 8%; right: 8%; bottom: 6px; height: 40px; pointer-events: none;
-  background: radial-gradient(50% 50% at 50% 50%, rgba(40, 34, 26, .16), rgba(40,34,26,0));
-  filter: blur(4px);
-}
+.mkr-bracket-l { left: 0; } .mkr-bracket-r { right: 0; }
 
 .mkr-rack {
   position: relative; z-index: 2; height: 100%;
   display: flex; justify-content: center; align-items: flex-start;
-  padding-top: 38px !important;
+  padding-top: 36px !important;
 }
 .mkr-railzone.is-scroll { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
 .mkr-railzone.is-scroll::-webkit-scrollbar { display: none; }
-.mkr-railzone.is-scroll .mkr-rack { justify-content: flex-start; width: max-content; padding: 38px 40px 0 !important; }
+.mkr-railzone.is-scroll .mkr-rack { justify-content: flex-start; width: max-content; padding: 36px 30px 0 !important; }
 .mkr-railzone.is-scroll .mkr-rod { display: none; }
 .mkr-railzone.is-scroll .mkr-rack::before {
-  content: ""; position: absolute; left: 10px; right: 10px; top: 44px; height: 11px; border-radius: 6px; z-index: -1;
-  background: linear-gradient(180deg, #ffffff 0%, #d7d8db 22%, #8b8d92 52%, #c9cace 74%, #7f8186 100%);
-  box-shadow: 0 10px 14px -8px rgba(0,0,0,.35);
+  content: ""; position: absolute; left: 8px; right: 8px; top: 41px; height: 12px; border-radius: 7px; z-index: -1;
+  background: linear-gradient(180deg, #ffffff 0%, #e3e4e6 18%, #a7a9ad 44%, #6f7176 58%, #c2c4c8 78%, #8c8e93 100%);
+  box-shadow: 0 12px 16px -10px rgba(0,0,0,.4);
 }
 
 .mkr-slot {
   position: relative; flex: 0 0 auto; height: 100%;
-  width: var(--mkr-slot, 70px);
-  transition: width .7s var(--mkr-ease);
+  width: calc(var(--ws, 70px) * var(--k, 1) + var(--gap, 24px));
+  transition: width .6s var(--mkr-ease);
 }
-.mkr-slot.is-active { width: calc(var(--mkr-slot, 70px) + var(--mkr-grow, 200px)); z-index: 10; }
+.mkr-slot.is-active { width: calc(var(--wf, 240px) * var(--k, 1) + var(--gap, 24px)); z-index: 10; }
 .mkr .mkr-item { position: absolute; inset: 0; display: block; border-radius: 10px; }
 .mkr .mkr-item:focus-visible { outline-offset: -4px; }
 
 .mkr-garment {
-  position: absolute; left: 50%; top: 0; height: var(--h, 320px);
-  transform-origin: 50% 0;
-  transform: translateX(-50%) perspective(1100px) rotateY(62deg) scale(.9);
-  transition: transform .75s var(--mkr-ease), filter .6s var(--mkr-ease);
-  filter: brightness(.9) saturate(.96) drop-shadow(10px 14px 12px rgba(30, 24, 16, .22));
+  position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+  width: calc(var(--wf, 240px) * var(--k, 1)); height: calc(var(--h, 300px) * var(--k, 1));
+  --sh: calc(var(--h, 300px) * var(--k, 1));
   pointer-events: none;
+  filter: drop-shadow(6px 12px 10px rgba(30, 26, 20, .16));
 }
-.mkr-slot.is-before .mkr-garment { transform: translateX(-50%) perspective(1100px) rotateY(-62deg) scale(.9); }
-.mkr-slot.is-active .mkr-garment {
-  transform: translateX(-50%) perspective(1100px) rotateY(0deg) scale(var(--grow-s, 1.14));
-  filter: brightness(1.02) saturate(1.02) drop-shadow(0 26px 26px rgba(30, 24, 16, .26));
+.mkr-face { position: absolute; top: 0; left: 50%; display: block; backface-visibility: hidden; transform-origin: 50% 0; }
+.mkr-face-side {
+  transform: translateX(-50%) perspective(900px) rotateY(0deg);
+  transition: transform .34s cubic-bezier(.5, 0, .75, 0) .12s, opacity .2s linear .26s;
 }
-.mkr-swing { display: block; height: 100%; transform-origin: 50% 0; }
-.mkr-slot.is-active .mkr-swing { animation: mkr-swing 1.4s var(--mkr-ease); }
-.mkr-garment { --sh: var(--h, 320px); }
+.mkr-face-side.is-fake { transform: translateX(-50%) perspective(900px) rotateY(64deg); }
+.mkr-face-front {
+  opacity: 0;
+  transform: translateX(-50%) perspective(900px) rotateY(-88deg);
+  transition: transform .3s cubic-bezier(.5, 0, .75, 0), opacity .12s linear .18s;
+}
+.mkr-slot.is-active .mkr-face-side { opacity: 0; transform: translateX(-50%) perspective(900px) rotateY(88deg); transition: transform .3s cubic-bezier(.5, 0, .75, 0), opacity .1s linear .22s; }
+.mkr-slot.is-active .mkr-face-front { opacity: 1; transform: translateX(-50%) perspective(900px) rotateY(0deg); transition: transform .5s cubic-bezier(.2, .9, .3, 1.15) .26s, opacity .08s linear .26s; }
+.mkr-swing { display: block; transform-origin: 50% 0; }
+.mkr-slot.is-active .mkr-swing { animation: mkr-swing 1.5s var(--mkr-ease) .45s both; }
 .mkr-img { display: block; }
 .mkr-slot.is-sold .mkr-garment { opacity: .5; }
 
+.mkr-tag {
+  position: absolute; left: 50%; top: calc(var(--h, 300px) * var(--k, 1) + 16px); transform: translate(-50%, 4px);
+  white-space: nowrap; font-size: 11px; letter-spacing: .02em; color: var(--mkr-muted);
+  opacity: 0; transition: opacity .25s, transform .35s var(--mkr-ease); pointer-events: none;
+}
+.mkr-slot.is-active .mkr-tag { opacity: 1; transform: translate(-50%, 0); transition-delay: .3s; }
+
 @keyframes mkr-swing {
-  0% { transform: rotate(4.5deg); }
-  30% { transform: rotate(-2.6deg); }
-  55% { transform: rotate(1.3deg); }
-  78% { transform: rotate(-.5deg); }
+  0% { transform: rotate(2.4deg); }
+  35% { transform: rotate(-1.4deg); }
+  65% { transform: rotate(.6deg); }
   100% { transform: rotate(0); }
 }
 .mkr-rack.is-entering .mkr-garment { animation: mkr-hang .9s var(--mkr-spring) backwards; animation-delay: calc(var(--i) * 45ms); }
-@keyframes mkr-hang { from { opacity: 0; translate: 0 -40px; } to { opacity: 1; translate: 0 0; } }
+@keyframes mkr-hang { from { opacity: 0; translate: 0 -30px; } to { opacity: 1; translate: 0 0; } }
 
-/* Wall */
-.mkr-wall { position: relative; display: flex; flex-direction: column; align-items: stretch; justify-content: center; padding-top: 6px; }
-.mkr-wall-panel {
-  position: relative; border-radius: 6px; padding: 30px 14px 18px;
-  background:
-    repeating-linear-gradient(180deg, rgba(0,0,0,0) 0 46px, rgba(70, 44, 22, .38) 46px 48px, rgba(255,255,255,.22) 48px 49px, rgba(0,0,0,0) 49px 50px),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .09' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .28 0 0 0 0 .12 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E"),
-    linear-gradient(180deg, #d9b890, #c49a6c);
-  background-size: auto, 600px 300px, auto;
-  box-shadow: inset 0 14px 26px -16px rgba(40, 24, 10, .55), inset 0 -10px 20px -14px rgba(40,24,10,.4), 0 30px 40px -30px rgba(40,24,10,.5);
-}
-.mkr-pegs { display: grid; grid-template-columns: repeat(3, 1fr); row-gap: 20px; column-gap: 6px; }
-.mkr-peg { position: relative; height: calc(var(--h, 120px) + 44px); display: flex; justify-content: center; }
+/* Wall: pegs on the same pegboard */
+.mkr-wall { position: relative; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 24px; }
+.mkr-wall-panel { position: relative; padding: 0 4px; }
+.mkr-pegs { display: grid; grid-template-columns: repeat(3, 1fr); row-gap: 30px; column-gap: 8px; }
+.mkr-peg { position: relative; height: calc(var(--h, 120px) + 60px); display: flex; justify-content: center; }
 .mkr-hook {
-  position: absolute; top: 0; left: 50%; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; z-index: 3;
-  background: radial-gradient(circle at 35% 35%, #555, #121212 70%);
-  box-shadow: 0 2px 3px rgba(0,0,0,.4);
+  position: absolute; top: 0; left: 50%; width: 11px; height: 11px; margin-left: -5.5px; border-radius: 50%; z-index: 3;
+  background: radial-gradient(circle at 35% 30%, #ffffff, #b6b8bc 45%, #6c6e73 100%);
+  box-shadow: 0 2px 3px rgba(0,0,0,.35);
 }
 .mkr-hook::after {
-  content: ""; position: absolute; left: 50%; top: 5px; width: 4px; height: 20px; margin-left: -2px; border-radius: 0 0 4px 4px;
-  background: linear-gradient(90deg, #0d0d0d, #3b3b3b 50%, #0d0d0d);
-  box-shadow: 3px 6px 6px rgba(0,0,0,.25);
+  content: ""; position: absolute; left: 50%; top: 6px; width: 3px; height: 16px; margin-left: -1.5px; border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, #8a8c91, #eeeeef 50%, #8a8c91);
+  box-shadow: 2px 5px 5px rgba(0,0,0,.2);
 }
 .mkr .mkr-wallitem { position: absolute; left: 0; right: 0; top: 16px; bottom: 0; display: flex; justify-content: center; border-radius: 8px; }
 .mkr-wallswing {
   display: block; --sh: var(--h, 120px); transform-origin: 50% 0;
   transition: transform .6s var(--mkr-ease), filter .5s;
-  filter: drop-shadow(4px 10px 8px rgba(40, 22, 8, .35));
+  filter: drop-shadow(4px 10px 8px rgba(30, 26, 20, .2));
 }
 .mkr-peg-tote .mkr-wallswing { margin-top: -10px; }
-.mkr-peg-beanie .mkr-wallswing { margin-top: 2px; }
 .mkr-wallimg { display: block; }
 .mkr .mkr-wallitem:hover .mkr-wallswing, .mkr .mkr-wallitem:focus-visible .mkr-wallswing {
-  transform: scale(1.1); animation: mkr-swing 1.3s var(--mkr-ease);
-  filter: drop-shadow(6px 16px 12px rgba(40, 22, 8, .4));
+  transform: scale(1.08); animation: mkr-swing 1.3s var(--mkr-ease);
+  filter: drop-shadow(6px 16px 12px rgba(30, 26, 20, .26));
 }
-.mkr-wall-label {
-  margin-top: 10px !important; text-align: center; font-family: var(--mkr-serif); font-style: italic; font-size: 17px; color: var(--mkr-muted);
-}
+.mkr-wallitem .mkr-tag { top: calc(var(--h, 120px) + 10px); }
+.mkr-wallitem:hover .mkr-tag, .mkr-wallitem:focus-visible .mkr-tag { opacity: 1; transform: translate(-50%, 0); }
+.mkr-wall-label { margin-top: 6px !important; text-align: center; font-size: 10.5px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--mkr-muted); }
 
 /* ------------------------------------------------------------------ */
 /* Under the rail                                                     */
@@ -339,8 +331,7 @@ html.mkr-lock { overflow: hidden; }
   .mkr-tabs::-webkit-scrollbar { display: none; }
   .mkr .mkr-tab { white-space: nowrap; }
   .mkr-scene { padding: 6px 0 0; }
-  .mkr-railzone { height: 440px; }
-  .mkr-garment { height: calc(var(--h, 320px) * .82); --sh: calc(var(--h, 320px) * .82); }
+
   .mkr-wall { padding: 0 16px; }
 
   .mkr-d-top { padding: 14px 16px; }
@@ -594,8 +585,8 @@ html.mkr-lock { overflow: hidden; }
       inStock: true
     };
   }
-  /* Studio cut-outs of every piece on its hanger, packed into one image sheet: [x, y, width, height] */
-  window.MKR_ATLAS = {"w": 4096, "h": 2272, "items": {"suit-black": [8, 8, 351, 820], "suit-ivory": [367, 8, 351, 820], "suit-coffee": [726, 8, 350, 820], "suit-grey": [1084, 8, 349, 820], "suit-beige": [1441, 8, 343, 820], "ladies-grey": [1792, 8, 328, 820], "ladies-black": [2128, 8, 348, 820], "ladies-burgundy": [2484, 8, 333, 820], "pants-jungle": [2825, 8, 340, 780], "pants-jungle-snow": [3173, 8, 342, 780], "pants-grey": [3523, 8, 358, 780], "pants-beige": [8, 836, 335, 780], "qzip-sand": [351, 836, 531, 660], "qzip-black": [890, 836, 521, 660], "jacket-black": [1419, 836, 536, 660], "tee-black": [1963, 836, 506, 640], "tee-makosa": [2477, 836, 499, 640], "tee-white": [2984, 836, 501, 640], "tee-burgundy": [3493, 836, 511, 640], "tee-sand": [8, 1624, 426, 640], "tee-taupe": [442, 1624, 424, 640], "tee-navy": [874, 1624, 415, 640], "hoodie-black": [1297, 1624, 470, 640], "beanie-navy": [1775, 1624, 387, 420], "beanie-grey": [2170, 1624, 379, 420], "beanie-beige": [2557, 1624, 386, 420], "tote-white": [2951, 1624, 213, 420], "tote-black": [3172, 1624, 296, 420], "socks": [3476, 1624, 267, 420]}, "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3J10z5e8feQnKs6nWKt856Ecc0m/4b5d7eac-4560-4887-a292-fbee2182d89e.webp"};
+  /* Studio cut-outs of every piece on its hanger (front view, plus 'side:' views for the rail), packed into one image sheet: [x, y, width, height] */
+  window.MKR_ATLAS = {"w": 4096, "h": 2920, "items": {"suit-black": [8, 8, 351, 820], "suit-ivory": [367, 8, 351, 820], "suit-coffee": [726, 8, 350, 820], "suit-grey": [1084, 8, 349, 820], "suit-beige": [1441, 8, 343, 820], "ladies-grey": [1792, 8, 328, 820], "ladies-black": [2128, 8, 348, 820], "ladies-burgundy": [2484, 8, 333, 820], "side:suit-black": [2825, 8, 134, 820], "side:suit-ivory": [2967, 8, 141, 820], "side:suit-coffee": [3116, 8, 133, 820], "side:suit-grey": [3257, 8, 136, 820], "side:suit-beige": [3401, 8, 141, 820], "side:ladies-grey": [3550, 8, 135, 820], "side:ladies-black": [3693, 8, 139, 820], "side:ladies-burgundy": [3840, 8, 138, 820], "pants-jungle": [8, 836, 340, 780], "pants-jungle-snow": [356, 836, 342, 780], "pants-grey": [706, 836, 358, 780], "pants-beige": [1072, 836, 335, 780], "side:pants-jungle": [1415, 836, 127, 780], "side:pants-jungle-snow": [1550, 836, 123, 780], "side:pants-grey": [1681, 836, 129, 780], "side:pants-beige": [1818, 836, 130, 780], "qzip-sand": [1956, 836, 531, 660], "qzip-black": [2495, 836, 521, 660], "jacket-black": [3024, 836, 536, 660], "side:qzip-sand": [3568, 836, 106, 660], "side:qzip-black": [3682, 836, 109, 660], "side:jacket-black": [3799, 836, 123, 660], "tee-black": [8, 1624, 506, 640], "tee-makosa": [522, 1624, 499, 640], "tee-white": [1029, 1624, 501, 640], "tee-burgundy": [1538, 1624, 511, 640], "tee-sand": [2057, 1624, 426, 640], "tee-taupe": [2491, 1624, 424, 640], "tee-navy": [2923, 1624, 415, 640], "hoodie-black": [3346, 1624, 470, 640], "side:tee-black": [3824, 1624, 121, 640], "side:tee-makosa": [3953, 1624, 117, 640], "side:tee-white": [8, 2272, 117, 640], "side:tee-burgundy": [133, 2272, 118, 640], "side:tee-sand": [259, 2272, 112, 640], "side:tee-taupe": [379, 2272, 111, 640], "side:tee-navy": [498, 2272, 118, 640], "side:hoodie-black": [624, 2272, 186, 640], "beanie-navy": [818, 2272, 387, 420], "beanie-grey": [1213, 2272, 379, 420], "beanie-beige": [1600, 2272, 386, 420], "tote-white": [1994, 2272, 213, 420], "tote-black": [2215, 2272, 296, 420], "socks": [2519, 2272, 267, 420]}, "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3J10z5e8feQnKs6nWKt856Ecc0m/0a0469ef-90f0-4b92-962e-01a62b985629.webp"};
 
   window.MKR_FALLBACK_PRODUCTS = [
     p('T-Shirt – Makosa Ni Yangu', 1500, '2026/02/blacktshirt_79fe47d5-b4c9-4742-b593-2fa0f86024e8-819x1024.webp'),
@@ -1220,8 +1211,16 @@ html.mkr-lock { overflow: hidden; }
   };
 
   // A studio cut-out drawn from the shared image sheet, or the product photo as a fallback
-  Rack.prototype.imgTag = function (p, cls) {
-    var a = this.atlas, it = p._cut ? a.items[p._key] : null;
+  Rack.prototype.sideOf = function (p) {
+    var a = this.atlas;
+    return (a && p._key && a.items['side:' + p._key]) || null;
+  };
+  Rack.prototype.ratio = function (p, side) {
+    var a = this.atlas, it = a && p._key && a.items[(side ? 'side:' : '') + p._key];
+    return it ? it[2] / it[3] : (side ? .3 : .78);
+  };
+  Rack.prototype.imgTag = function (p, cls, side) {
+    var a = this.atlas, it = p._cut ? a.items[(side && this.sideOf(p) ? 'side:' : '') + p._key] : null;
     if (it) {
       var h = it[3];
       return '<span class="mkr-sprite ' + cls + '" role="img" aria-label="' + esc(p.name) + '" style="' +
@@ -1251,10 +1250,8 @@ html.mkr-lock { overflow: hidden; }
       '</div>' +
       '<div class="mkr-scene">' +
       '<div class="mkr-railzone">' +
-      '<div class="mkr-light" aria-hidden="true"></div>' +
-      '<div class="mkr-rod" aria-hidden="true"><span class="mkr-drop mkr-drop-l"></span><span class="mkr-drop mkr-drop-r"></span><span class="mkr-bar"></span></div>' +
+      '<div class="mkr-rod" aria-hidden="true"><span class="mkr-bracket mkr-bracket-l"></span><span class="mkr-bar"></span><span class="mkr-bracket mkr-bracket-r"></span></div>' +
       '<ul class="mkr-rack" role="list"></ul>' +
-      '<div class="mkr-floor" aria-hidden="true"></div>' +
       '</div>' +
       (this.wall.length ?
         '<aside class="mkr-wall" aria-label="Hats, bags and socks wall">' +
@@ -1265,7 +1262,8 @@ html.mkr-lock { overflow: hidden; }
           return '<li class="mkr-peg mkr-peg-' + p._c.type + '" style="--h:' + h + 'px">' +
             '<span class="mkr-hook" aria-hidden="true"></span>' +
             '<button type="button" class="mkr-wallitem" data-w="' + i + '" aria-label="' + esc(p.name + ', ' + self.money(p.price) + (p.inStock === false ? ', sold out' : '') + '. Open details') + '">' +
-            '<span class="mkr-wallswing">' + self.imgTag(p, 'mkr-wallimg') + '</span></button>' +
+            '<span class="mkr-wallswing">' + self.imgTag(p, 'mkr-wallimg') + '</span>' +
+            '<span class="mkr-tag" aria-hidden="true">' + esc(p.name) + '</span></button>' +
             '</li>';
         }).join('') +
         '</ul></div>' +
@@ -1273,7 +1271,7 @@ html.mkr-lock { overflow: hidden; }
         '</aside>' : '') +
       '</div>' +
       '<div class="mkr-under">' +
-      '<p class="mkr-caption" aria-live="polite"></p>' +
+      '<p class="mkr-caption mkr-sr" aria-live="polite"></p>' +
       '<button type="button" class="mkr-pill">See availability</button>' +
       '</div>' +
       '<div class="mkr-ticker" aria-hidden="true"><div class="mkr-ticker-track">' + tick + tick + tick + tick + '</div></div>' +
@@ -1339,9 +1337,16 @@ html.mkr-lock { overflow: hidden; }
     this.rackEl.innerHTML = items.map(function (p, i) {
       var sold = p.inStock === false;
       var h = HEIGHT[p._c.type] || 320;
-      return '<li class="mkr-slot' + (sold ? ' is-sold' : '') + '" style="--i:' + i + ';--h:' + h + 'px;--grow-s:' + (h > 380 ? 1.06 : 1.14) + '">' +
+      var real = !!self.sideOf(p);
+      var ws = Math.round(h * (real ? self.ratio(p, true) : self.ratio(p) * .42));
+      var wf = Math.round(h * self.ratio(p));
+      return '<li class="mkr-slot' + (sold ? ' is-sold' : '') + '" style="--i:' + i + ';--h:' + h + 'px;--ws:' + ws + 'px;--wf:' + wf + 'px">' +
         '<button type="button" class="mkr-item" data-i="' + i + '" aria-label="' + esc(p.name + ', ' + self.money(p.price) + (sold ? ', sold out' : '') + '. Open details') + '">' +
-        '<span class="mkr-garment"><span class="mkr-swing">' + self.imgTag(p, 'mkr-img') + '</span></span>' +
+        '<span class="mkr-garment">' +
+        '<span class="mkr-face mkr-face-side' + (real ? '' : ' is-fake') + '">' + self.imgTag(p, 'mkr-img', true) + '</span>' +
+        '<span class="mkr-face mkr-face-front"><span class="mkr-swing">' + self.imgTag(p, 'mkr-img') + '</span></span>' +
+        '</span>' +
+        '<span class="mkr-tag" aria-hidden="true">' + esc(p.name) + (sold ? ' · Sold out' : '') + '</span>' +
         '</button></li>';
     }).join('');
 
@@ -1366,17 +1371,27 @@ html.mkr-lock { overflow: hidden; }
     this.rackEl.classList.add('is-entering');
   };
 
+  // Fit the rail: garments keep their true proportions and the whole row scales down if needed
   Rack.prototype.layout = function () {
-    var n = (this.visible && this.visible.length) || 1;
-    var w = this.zoneEl.clientWidth;
-    var small = w < 560;
-    var grow = small ? 120 : 200;
-    var slot = Math.floor((w - 70 - grow) / n);
-    var min = small ? 58 : 50;
-    this.zoneEl.classList.toggle('is-scroll', slot < min);
-    slot = Math.max(min, Math.min(slot, 120));
-    this.root.style.setProperty('--mkr-slot', slot + 'px');
-    this.root.style.setProperty('--mkr-grow', grow + 'px');
+    var items = this.visible || [];
+    if (!items.length) return;
+    var self = this, w = this.zoneEl.clientWidth, small = w < 560;
+    var gap = small ? 14 : 24, sum = 0, extra = 0, maxH = 0;
+    items.forEach(function (p) {
+      var h = HEIGHT[p._c.type] || 320;
+      maxH = Math.max(maxH, h);
+      var ws = h * (self.sideOf(p) ? self.ratio(p, true) : self.ratio(p) * .42), wf = h * self.ratio(p);
+      sum += ws + gap; extra = Math.max(extra, wf - ws);
+    });
+    var need = sum + extra + 60;
+    var k = Math.min(1, (w - 20) / need);
+    var scroll = k < (small ? .8 : .62);
+    if (scroll) k = small ? .8 : .62;
+    this.zoneEl.classList.toggle('is-scroll', scroll);
+    this.root.style.setProperty('--k', k.toFixed(3));
+    this.root.style.setProperty('--railh', Math.round(Math.max(maxH * k + 96, 380)) + 'px');
+    this.root.style.setProperty('--gap', gap + 'px');
+    this.root.style.setProperty('--rodw', Math.round(Math.min(scroll ? need * k : w - 8, need * k + 120)) + 'px');
   };
 
   Rack.prototype.setActive = function (i) {
@@ -1396,7 +1411,7 @@ html.mkr-lock { overflow: hidden; }
         (price ? '<span class="mkr-caption-price">' + price + '</span>' : '') +
         (p.inStock === false ? '<span class="mkr-caption-sold">Sold out</span>' : '');
     } else {
-      this.captionEl.innerHTML = '<span class="mkr-caption-hint">Hover a piece to turn it round. Click to take it off the rail.</span>';
+      this.captionEl.innerHTML = '';
     }
   };
 
