@@ -88,9 +88,14 @@ demo/                 Same demo page plus a Chrome launcher
 dist/mkurugenzi.zip   Ready-to-upload plugin
 tools/build.py        Rebuilds demo/index.html and dist/mkurugenzi.zip
 tools/pack_atlas.py   Builds the garment image sheet from green-screen renders
+docs/                 Design resources and references
 ```
 
 After changing anything in `assets/`, run `python3 tools/build.py`.
+
+## Design resources
+
+Motion, visual, icon and imagery tools for future polish are listed in [docs/DESIGN-RESOURCES.md](docs/DESIGN-RESOURCES.md).
 
 ## Licence
 
